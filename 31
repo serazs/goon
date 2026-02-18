@@ -1,0 +1,341 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local isR6 = character:FindFirstChild("Torso") ~= nil
+
+-- Notification Function (gelişmiş)
+local function showNotification(message)
+    local notificationGui = Instance.new("ScreenGui")
+    notificationGui.Name = "NotificationGui"
+    notificationGui.Parent = game.CoreGui
+    notificationGui.IgnoreGuiInset = true
+
+    local notificationFrame = Instance.new("Frame")
+    notificationFrame.Size = UDim2.new(0, 320, 0, 60)
+    notificationFrame.Position = UDim2.new(0.5, -160, 1, -80)
+    notificationFrame.AnchorPoint = Vector2.new(0.5, 1)
+    notificationFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    notificationFrame.BorderSizePixel = 0
+    notificationFrame.Parent = notificationGui
+
+    local uicorner = Instance.new("UICorner")
+    uicorner.CornerRadius = UDim.new(0, 12)
+    uicorner.Parent = notificationFrame
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = 2
+    stroke.Color = Color3.fromRGB(100, 100, 255)
+    stroke.Parent = notificationFrame
+
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, -20, 1, 0)
+    textLabel.Position = UDim2.new(0, 10, 0, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = message .. " | by pyst"
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.Font = Enum.Font.GothamBold
+    textLabel.TextSize = 18
+    textLabel.TextXAlignment = Enum.TextXAlignment.Left
+    textLabel.Parent = notificationFrame
+
+    notificationFrame.BackgroundTransparency = 1
+    textLabel.TextTransparency = 1
+
+    game:GetService("TweenService"):Create(
+        notificationFrame,
+        TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
+        {BackgroundTransparency = 0}
+    ):Play()
+
+    game:GetService("TweenService"):Create(
+        textLabel,
+        TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out),
+        {TextTransparency = 0}
+    ):Play()
+
+    task.delay(5, function()
+        game:GetService("TweenService"):Create(
+            notificationFrame,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In),
+            {BackgroundTransparency = 1}
+        ):Play()
+
+        game:GetService("TweenService"):Create(
+            textLabel,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In),
+            {TextTransparency = 1}
+        ):Play()
+
+        task.delay(0.5, function()
+            notificationGui:Destroy()
+        end)
+    end)
+end
+
+-- Show notification based on rig type
+if isR6 then
+    showNotification("🌟 R6 detected!")
+else
+    showNotification("✨ R15 detected!")
+end
+
+-- Create Screen GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "BangGui"
+gui.Parent = game.CoreGui
+gui.IgnoreGuiInset = true
+gui.ResetOnSpawn = false
+
+-- Main Frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 350, 0, 400)
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20) -- Koyu gri
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = gui
+
+-- Köşeleri yuvarlat
+local uicorner = Instance.new("UICorner")
+uicorner.CornerRadius = UDim.new(0, 12)
+uicorner.Parent = mainFrame
+
+-- RGB Kenarlık
+local stroke = Instance.new("UIStroke")
+stroke.Thickness = 3
+stroke.Color = Color3.fromRGB(255, 0, 0) -- Geçici, RGB döngüde değişecek
+stroke.Parent = mainFrame
+
+-- RGB efekti
+task.spawn(function()
+    local hue = 0
+    while true do
+        hue = hue + 0.01
+        if hue > 1 then hue = 0 end
+        stroke.Color = Color3.fromHSV(hue, 1, 1)
+        task.wait(0.03)
+    end
+end)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -60, 0, 35)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "🎨 Bang Scripts"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 22
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = mainFrame
+
+-- Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -40, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+closeButton.Text = "X"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 18
+closeButton.TextColor3 = Color3.fromRGB(255, 100, 100)
+closeButton.Parent = mainFrame
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeButton
+
+closeButton.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+-- Minimize Button
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+minimizeButton.Position = UDim2.new(1, -80, 0, 5)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 24
+minimizeButton.TextColor3 = Color3.fromRGB(255, 200, 0)
+minimizeButton.Parent = mainFrame
+
+local minimizeCorner = Instance.new("UICorner")
+minimizeCorner.CornerRadius = UDim.new(0, 8)
+minimizeCorner.Parent = minimizeButton
+
+local minimized = false
+minimizeButton.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    if minimized then
+        mainFrame:TweenSize(UDim2.new(0, 350, 0, 35), Enum.EasingDirection.In, Enum.EasingStyle.Quint, 0.3)
+    else
+        mainFrame:TweenSize(UDim2.new(0, 350, 0, 400), Enum.EasingDirection.Out, Enum.EasingStyle.Quint, 0.3)
+    end
+end)
+
+-- Scrolling Frame (içerik)
+local scrollingFrame = Instance.new("ScrollingFrame")
+scrollingFrame.Size = UDim2.new(1, -20, 1, -50)
+scrollingFrame.Position = UDim2.new(0, 10, 0, 40)
+scrollingFrame.BackgroundTransparency = 1
+scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0) -- Dinamik hesaplanacak
+scrollingFrame.ScrollBarThickness = 6
+scrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(80, 80, 80)
+scrollingFrame.Parent = mainFrame
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 8)
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Parent = scrollingFrame
+
+-- CanvasSize'ı otomatik ayarla
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scrollingFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y + 20)
+end)
+
+-- Buttons Data
+local buttons = {
+    {name = "🎯 Bang V2", r6 = "https://pastebin.com/raw/aPSHMV6K", r15 = "https://pastebin.com/raw/1ePMTt9n"},
+    {name = "🎉 Get Banged", r6 = "https://pastebin.com/raw/zHbw7ND1", r15 = "https://pastebin.com/raw/7hvcjDnW"},
+    {name = "💥 Suck", r6 = "https://pastebin.com/raw/SymCfnAW", r15 = "https://pastebin.com/raw/p8yxRfr4"},
+    {name = "🔥 Get Suc", r6 = "https://pastebin.com/raw/FPu4e2Qh", r15 = "https://pastebin.com/raw/DyPP2tAF"},
+    {name = "⚡ Jerk", r6 = "https://pastefy.app/wa3v2Vgm/raw", r15 = "https://pastefy.app/YZoglOyJ/raw"}
+}
+
+-- Sabit renk paleti (her buton için farklı ama uyumlu)
+local colors = {
+    Color3.fromRGB(255, 70, 70),   -- Kırmızı
+    Color3.fromRGB(70, 150, 255),  -- Mavi
+    Color3.fromRGB(50, 200, 100),  -- Yeşil
+    Color3.fromRGB(255, 180, 40),  -- Turuncu
+    Color3.fromRGB(180, 100, 255), -- Mor
+}
+
+for i, buttonData in ipairs(buttons) do
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(0.9, 0, 0, 45)
+    button.BackgroundColor3 = colors[i] or Color3.fromRGB(100, 100, 100)
+    button.Text = buttonData.name
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 18
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.AutoButtonColor = false
+    button.Parent = scrollingFrame
+
+    local uicorner = Instance.new("UICorner")
+    uicorner.CornerRadius = UDim.new(0, 8)
+    uicorner.Parent = button
+
+    -- Hover efekti
+    button.MouseEnter:Connect(function()
+        button:TweenSize(UDim2.new(0.92, 0, 0, 47), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.1)
+    end)
+    button.MouseLeave:Connect(function()
+        button:TweenSize(UDim2.new(0.9, 0, 0, 45), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.1)
+    end)
+
+    button.MouseButton1Click:Connect(function()
+        if isR6 then
+            loadstring(game:HttpGet(buttonData.r6))()
+        else
+            loadstring(game:HttpGet(buttonData.r15))()
+        end
+    end)
+end
+
+-- Yardım butonu (isteğe bağlı, ekleyelim)
+local helpButton = Instance.new("TextButton")
+helpButton.Size = UDim2.new(0, 30, 0, 30)
+helpButton.Position = UDim2.new(0, 10, 1, -40)
+helpButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+helpButton.Text = "?"
+helpButton.Font = Enum.Font.GothamBold
+helpButton.TextSize = 20
+helpButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+helpButton.Parent = mainFrame
+
+local helpCorner = Instance.new("UICorner")
+helpCorner.CornerRadius = UDim.new(0, 8)
+helpCorner.Parent = helpButton
+
+local helpFrame = Instance.new("Frame")
+helpFrame.Size = UDim2.new(0, 250, 0, 150)
+helpFrame.Position = UDim2.new(0.5, -125, 0.5, -75)
+helpFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+helpFrame.Visible = false
+helpFrame.Parent = gui
+
+local helpCorner2 = Instance.new("UICorner")
+helpCorner2.CornerRadius = UDim.new(0, 12)
+helpCorner2.Parent = helpFrame
+
+local helpStroke = Instance.new("UIStroke")
+helpStroke.Thickness = 2
+helpStroke.Color = Color3.fromRGB(100, 100, 255)
+helpStroke.Parent = helpFrame
+
+local helpText = Instance.new("TextLabel")
+helpText.Size = UDim2.new(1, -20, 1, -20)
+helpText.Position = UDim2.new(0, 10, 0, 10)
+helpText.BackgroundTransparency = 1
+helpText.Text = [[Script Seçici
+
+Her buton farklı bir scripti çalıştırır.
+R6/R15 otomatik algılanır.
+
+Kapatmak için X'e basın.
+Küçültmek için -'ye basın.]]
+helpText.TextColor3 = Color3.fromRGB(255, 255, 255)
+helpText.Font = Enum.Font.Gotham
+helpText.TextSize = 14
+helpText.TextWrapped = true
+helpText.Parent = helpFrame
+
+helpButton.MouseButton1Click:Connect(function()
+    helpFrame.Visible = not helpFrame.Visible
+end)
+
+-- Dışarı tıklanınca helpFrame kapansın (isteğe bağlı)
+gui.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local pos = UIS:GetMouseLocation()
+        local absPos = helpFrame.AbsolutePosition
+        local size = helpFrame.AbsoluteSize
+        if helpFrame.Visible and (pos.X < absPos.X or pos.X > absPos.X + size.X or pos.Y < absPos.Y or pos.Y > absPos.Y + size.Y) then
+            helpFrame.Visible = false
+        end
+    end
+end) -- 31 aktif bildirimi (5 saniye)
+local idLabel = Instance.new("TextLabel")
+idLabel.Size = UDim2.new(0, 150, 0, 50)
+idLabel.Position = UDim2.new(0.5, -75, 1, -60)  -- alt orta
+idLabel.BackgroundColor3 = Color3.fromRGB(255, 50, 50)  -- kırmızı
+idLabel.BackgroundTransparency = 0.2
+idLabel.Text = "31 AKTİF"
+idLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+idLabel.Font = Enum.Font.GothamBold
+idLabel.TextSize = 28
+idLabel.TextStrokeTransparency = 0.3
+idLabel.Parent = game:GetService("CoreGui")
+
+-- Köşeleri yuvarlat
+local idCorner = Instance.new("UICorner")
+idCorner.CornerRadius = UDim.new(0, 15)
+idCorner.Parent = idLabel
+
+-- Hafif gölge
+local shadow = Instance.new("ImageLabel")
+shadow.Size = UDim2.new(1, 10, 1, 10)
+shadow.Position = UDim2.new(0, -5, 0, -5)
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://1316045217"
+shadow.ImageColor3 = Color3.new(0, 0, 0)
+shadow.ImageTransparency = 0.6
+shadow.Parent = idLabel
+
+-- 5 saniye sonra yok ol
+task.delay(5, function()
+    idLabel:Destroy()
+end)
